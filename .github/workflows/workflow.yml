@@ -25,7 +25,7 @@ jobs:
 
   check_skip_condition:
     needs: pre_job
-    if: needs.pre_job.outputs.should_skip == 'true'
+    if: needs.pre_job.outputs.should_skip == 'false'
     runs-on: ubuntu-latest
     steps:
       - run: exit 1
