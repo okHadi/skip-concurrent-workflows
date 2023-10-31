@@ -11,8 +11,8 @@ jobs:
   pre_job:
     runs-on: ubuntu-latest
     # Map a step output to a job output
-    # outputs:
-    #   should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
     steps:
       - id: skip_check
         uses: fkirc/skip-duplicate-actions@v5
@@ -23,8 +23,15 @@ jobs:
           #paths_ignore: '["**/README.md", "**/docs/**"]'
           #do_not_skip: '["pull_request", "workflow_dispatch", "schedule"]'
 
+  check_skip_condition:
+    needs: pre_job
+    if: needs.pre_job.outputs.should_skip = 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - run: exit 1
+
   actual_job:
     runs-on: ubuntu-latest
-    needs: pre_job
+    needs: check_skip_condition
     steps:
       - run: echo "Sleeping for 3 minutes..." && sleep 180
